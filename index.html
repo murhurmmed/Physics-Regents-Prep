@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NYC Regents Physics 2026 Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f4ff;
+    --surface: #ffffff;
+    --surface2: #e8eeff;
+    --border: #b7c5f0;
+    --accent: #1a3a8f;
+    --accent2: #4f7ef7;
+    --accent3: #0f2560;
+    --blue-light: #d4dcfb;
+    --red: #c0392b;
+    --amber: #b7790a;
+    --text: #1a1e3a;
+    --muted: #5a6080;
+    --white: #ffffff;
+    --correct: #166534;
+    --correct-bg: #dcfce7;
+    --correct-border: #86efac;
+    --wrong: #991b1b;
+    --wrong-bg: #fee2e2;
+    --wrong-border: #fca5a5;
+    --cluster: #6b21a8;
+    --cluster-bg: #f3e8ff;
+    --cluster-border: #d8b4fe;
+  }
+ 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(79,126,247,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(26,58,143,0.07) 0%, transparent 50%);
+  }
+ 
+  .atom-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    opacity: 0.35;
+  }
+  .atom-bg::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 480px; height: 480px;
+    border: 36px solid rgba(26,58,143,0.06);
+    border-radius: 50%;
+  }
+  .atom-bg::after {
+    content: '';
+    position: absolute;
+    bottom: -160px; left: -90px;
+    width: 380px; height: 380px;
+    border: 28px solid rgba(79,126,247,0.07);
+    border-radius: 50%;
+  }
+ 
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+ 
+  /* ─── HEADER ─── */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeDown 0.6s ease both;
+  }
+  .header-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .header-label::before, .header-label::after {
+    content: '';
+    display: block;
+    width: 32px; height: 1px;
+    background: var(--accent2);
+    opacity: 0.6;
+  }
+  .header h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    color: var(--accent3);
+    line-height: 1.1;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+  }
+  .header h1 span {
+    color: var(--accent);
+    position: relative;
+  }
+  .header h1 span::after {
+    content: '';
+    position: absolute;
+    bottom: 2px; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent2);
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+  .header p { font-size: 14px; color: var(--muted); }
+  .new-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, var(--accent3), var(--accent));
+    color: white;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-top: 10px;
+    font-weight: 700;
+  }
+ 
+  /* ─── SETUP ─── */
+  #setup-screen { animation: fadeUp 0.5s ease both; }
+  .setup-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 4px 24px rgba(26,58,143,0.08);
+  }
+  .setup-card h2 { font-size: 20px; font-weight: 600; color: var(--accent3); margin-bottom: 6px; }
+  .setup-card > p { font-size: 13px; color: var(--muted); margin-bottom: 28px; line-height: 1.65; }
+ 
+  .info-banner {
+    background: var(--cluster-bg);
+    border: 1.5px solid var(--cluster-border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    font-size: 12px;
+    color: #3b0764;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.6;
+  }
+  .info-banner span:first-child { font-size: 18px; flex-shrink: 0; }
+ 
+  .sec-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: block;
+  }
+ 
+  .num-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .num-btn {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 16px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+  .num-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(26,58,143,0.12); }
+  .num-btn.selected { background: var(--accent); border-color: var(--accent); color: var(--white); box-shadow: 0 4px 18px rgba(26,58,143,0.3); transform: translateY(-2px); }
+ 
+  .custom-row { display: flex; gap: 12px; align-items: center; margin-bottom: 28px; }
+  .custom-row input {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    padding: 12px 16px;
+    width: 110px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .custom-row input:focus { border-color: var(--accent); }
+  .custom-row label { font-size: 13px; color: var(--muted); }
+ 
+  .topic-section { margin-bottom: 32px; }
+  .topic-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .topic-chip {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .topic-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .topic-chip.active { background: var(--blue-light); border-color: var(--accent); color: var(--accent3); font-weight: 600; }
+ 
+  .start-btn {
+    width: 100%;
+    background: var(--accent);
+    border: none;
+    border-radius: 16px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 18px rgba(26,58,143,0.28);
+  }
+  .start-btn:hover { background: var(--accent3); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(26,58,143,0.38); }
+  .start-btn:active { transform: scale(0.98); }
+ 
+  /* ─── QUIZ ─── */
+  #quiz-screen { display: none; }
+  .quiz-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    animation: fadeDown 0.4s ease both;
+  }
+  .q-counter { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted); }
+  .q-counter span { color: var(--accent); font-size: 17px; font-weight: 700; }
+  .score-badge {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    box-shadow: 0 2px 8px rgba(26,58,143,0.07);
+  }
+  .score-badge strong { color: var(--accent); }
+ 
+  .progress-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 4px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+ 
+  .tag-row { margin-bottom: 10px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .topic-tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent3);
+    background: var(--blue-light);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-weight: 700;
+  }
+  .cluster-tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cluster);
+    background: var(--cluster-bg);
+    border: 1px solid var(--cluster-border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-weight: 700;
+  }
+ 
+  /* Scenario box */
+  .scenario-box {
+    background: var(--cluster-bg);
+    border: 1.5px solid var(--cluster-border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.75;
+    color: #3b0764;
+    animation: fadeUp 0.35s ease both;
+  }
+  .scenario-box h4 {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cluster);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scenario-box h4::before { content: '🔭'; font-size: 14px; }
+  .scenario-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--cluster);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .scenario-box table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+  .scenario-box th {
+    background: rgba(107,33,168,0.1);
+    color: var(--cluster);
+    font-weight: 600;
+    padding: 6px 10px;
+    text-align: left;
+    border: 1px solid var(--cluster-border);
+  }
+  .scenario-box td {
+    padding: 5px 10px;
+    border: 1px solid var(--cluster-border);
+    color: #3b0764;
+  }
+  .eq-block {
+    background: rgba(107,33,168,0.06);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--cluster);
+    line-height: 1.8;
+  }
+ 
+  .question-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 22px;
+    padding: 32px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(26,58,143,0.07);
+    animation: fadeUp 0.35s ease both;
+  }
+  .question-text { font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.7; margin-bottom: 26px; }
+ 
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice-btn {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 15px 18px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    line-height: 1.55;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--blue-light); transform: translateX(4px); box-shadow: 0 2px 10px rgba(26,58,143,0.1); }
+  .choice-letter {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    background: rgba(26,58,143,0.08);
+    border-radius: 6px;
+    padding: 2px 8px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .choice-btn:hover:not(:disabled) .choice-letter { color: var(--accent3); background: rgba(26,58,143,0.15); border-color: var(--accent); }
+  .choice-btn.correct { border-color: var(--correct-border); background: var(--correct-bg); color: var(--correct); }
+  .choice-btn.correct .choice-letter { background: rgba(22,101,52,0.15); color: var(--correct); border-color: var(--correct-border); }
+  .choice-btn.wrong { border-color: var(--wrong-border); background: var(--wrong-bg); color: var(--wrong); }
+  .choice-btn.wrong .choice-letter { background: rgba(153,27,27,0.12); color: var(--wrong); border-color: var(--wrong-border); }
+  .choice-btn:disabled { cursor: default; transform: none; }
+ 
+  .feedback {
+    border-radius: 18px;
+    padding: 22px 24px;
+    margin-bottom: 16px;
+    display: none;
+    animation: slideDown 0.3s ease both;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct-fb { background: var(--correct-bg); border: 1.5px solid var(--correct-border); }
+  .feedback.wrong-fb { background: var(--wrong-bg); border: 1.5px solid var(--wrong-border); }
+  .feedback-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .feedback-icon { font-size: 20px; }
+  .feedback-title { font-size: 15px; font-weight: 700; }
+  .feedback.correct-fb .feedback-title { color: var(--correct); }
+  .feedback.wrong-fb .feedback-title { color: var(--wrong); }
+  .correct-answer-line {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--correct);
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: rgba(22,101,52,0.07);
+    border-radius: 8px;
+    display: none;
+    line-height: 1.6;
+  }
+  .explanation { font-size: 13px; color: #374151; line-height: 1.75; border-top: 1px solid rgba(0,0,0,0.07); padding-top: 12px; margin-top: 10px; }
+  .explanation strong { color: var(--text); }
+ 
+  .next-btn {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    color: var(--accent3);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: none;
+    box-shadow: 0 2px 8px rgba(26,58,143,0.06);
+  }
+  .next-btn.show { display: block; }
+  .next-btn:hover { background: var(--blue-light); border-color: var(--accent); transform: translateY(-1px); }
+ 
+  /* ─── RESULTS ─── */
+  #results-screen { display: none; }
+  .results-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 24px;
+    padding: 52px 44px;
+    text-align: center;
+    animation: fadeUp 0.5s ease both;
+    box-shadow: 0 8px 40px rgba(26,58,143,0.1);
+  }
+  .results-emoji { font-size: 58px; margin-bottom: 18px; display: block; animation: bounce 0.7s ease 0.2s both; }
+  .results-card h2 { font-size: 28px; font-weight: 700; color: var(--accent3); margin-bottom: 6px; }
+  .results-card > p { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+  .score-big { font-family: 'Space Mono', monospace; font-size: 72px; font-weight: 700; margin-bottom: 6px; line-height: 1; }
+  .score-big.excellent { color: var(--accent); }
+  .score-big.good { color: #0e7490; }
+  .score-big.okay { color: var(--amber); }
+  .score-big.poor { color: var(--red); }
+  .score-label { font-size: 13px; color: var(--muted); margin-bottom: 36px; font-family: 'Space Mono', monospace; }
+  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 36px; }
+  .stat-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+  .stat-num { font-family: 'Space Mono', monospace; font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+  .stat-num.blue { color: var(--accent); }
+  .stat-num.red { color: var(--red); }
+  .stat-num.neutral { color: var(--text); }
+  .stat-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .restart-btn {
+    background: var(--accent);
+    border: none;
+    border-radius: 14px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 16px 44px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 18px rgba(26,58,143,0.3);
+  }
+  .restart-btn:hover { background: var(--accent3); transform: translateY(-2px); }
+ 
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-16px); } to { opacity:1; transform:none; } }
+  @keyframes fadeUp   { from { opacity:0; transform:translateY(16px);  } to { opacity:1; transform:none; } }
+  @keyframes slideDown{ from { opacity:0; transform:translateY(-8px);  } to { opacity:1; transform:none; } }
+  @keyframes bounce   { 0%,100%{transform:translateY(0)} 40%{transform:translateY(-14px)} 70%{transform:translateY(-6px)} }
+</style>
+</head>
+<body>
+<div class="atom-bg"></div>
+<div class="container">
+ 
+  <div class="header">
+    <div class="header-label">New York State &nbsp;⚛&nbsp; Regents Examination</div>
+    <h1>Physics<br><span>Practice Quiz</span></h1>
+    <p>Aligned to the 2026 Physical Science: Physics NYSSLS Standards</p>
+    <div class="new-badge">✦ NEW 2026 FORMAT ✦</div>
+  </div>
+ 
+  <div id="setup-screen">
+    <div class="setup-card">
+      <h2>Configure your session</h2>
+      <p>Covers all major Regents Physics topics — Mechanics, Energy, Waves, Electricity & Magnetism, Modern Physics, and more. Includes 2026 NYSSLS cluster-style questions from the official Bungee Jumping, Automotive Optics, and World Record Jumps sample sets.</p>
+      <div class="info-banner">
+        <span>🔭</span>
+        <span>The 2026 exam uses <strong>cluster questions</strong> — groups of questions built around a real-world phenomenon. Purple scenario boxes will appear before those questions to provide context. Questions assess Science & Engineering Practices, not just recall.</span>
+      </div>
+      <span class="sec-label">Number of questions</span>
+      <div class="num-grid">
+        <button class="num-btn selected" onclick="selectNum(5,this)">5</button>
+        <button class="num-btn" onclick="selectNum(10,this)">10</button>
+        <button class="num-btn" onclick="selectNum(15,this)">15</button>
+        <button class="num-btn" onclick="selectNum(20,this)">20</button>
+        <button class="num-btn" onclick="selectNum(25,this)">25</button>
+        <button class="num-btn" onclick="selectNum(30,this)">30</button>
+        <button class="num-btn" onclick="selectNum(40,this)">40</button>
+        <button class="num-btn" onclick="selectNum(50,this)">50</button>
+      </div>
+      <div class="custom-row">
+        <input type="number" id="custom-num" min="1" max="200" placeholder="?" oninput="selectCustom(this.value)">
+        <label>custom number (max 200)</label>
+      </div>
+      <div class="topic-section">
+        <span class="sec-label">Filter by topic <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px">(all selected)</span></span>
+        <div class="topic-grid" id="topic-grid"></div>
+      </div>
+      <button class="start-btn" onclick="startQuiz()">Start Quiz →</button>
+    </div>
+  </div>
+ 
+  <div id="quiz-screen">
+    <div class="quiz-meta">
+      <div class="q-counter">Question <span id="q-num">1</span> of <span id="q-total">10</span></div>
+      <div class="score-badge">Score: <strong id="score-live">0</strong></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="tag-row">
+      <span class="topic-tag" id="q-topic">Topic</span>
+      <span class="cluster-tag" id="q-cluster-tag" style="display:none">Cluster</span>
+    </div>
+    <div class="scenario-box" id="scenario-box" style="display:none">
+      <h4>Scenario Context</h4>
+      <div id="scenario-content"></div>
+    </div>
+    <div class="question-card">
+      <div class="question-text" id="q-text"></div>
+      <div class="choices" id="choices"></div>
+    </div>
+    <div class="feedback" id="feedback">
+      <div class="feedback-header">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <span class="feedback-title" id="fb-title"></span>
+      </div>
+      <div class="correct-answer-line" id="correct-line"></div>
+      <div class="explanation" id="fb-explanation"></div>
+    </div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+  </div>
+ 
+  <div id="results-screen">
+    <div class="results-card">
+      <span class="results-emoji" id="results-emoji">🏆</span>
+      <h2 id="results-title">Quiz Complete!</h2>
+      <p id="results-subtitle">Here's how you did</p>
+      <div class="score-big" id="score-pct"></div>
+      <div class="score-label" id="score-fraction"></div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num blue" id="stat-correct">0</div><div class="stat-label">Correct</div></div>
+        <div class="stat-box"><div class="stat-num red" id="stat-wrong">0</div><div class="stat-label">Wrong</div></div>
+        <div class="stat-box"><div class="stat-num neutral" id="stat-total">0</div><div class="stat-label">Total</div></div>
+      </div>
+      <button class="restart-btn" onclick="restart()">Try Again</button>
+    </div>
+  </div>
+ 
+</div>
+<script>
+const ALL_QUESTIONS = [
+ 
+  // ═══════════════════════════════════════════════════════════
+  // CLUSTER: BUNGEE JUMPING (2026 NYSSLS Official Sample)
+  // ═══════════════════════════════════════════════════════════
+  {
+    topic:"Energy & Work",
+    cluster:"Bungee Jumping",
+    scenario:`<span class="scenario-title">Bungee Jumping</span>
+A bungee jumper of mass 65 kg jumps from a platform 50 m above the ground. A bungee cord (unstretched length = 20 m, spring constant k = 40 N/m) is attached to the jumper's ankles. The jumper falls freely until the cord begins to stretch, then decelerates as the cord stretches. Assume no air resistance and g = 9.8 m/s².
+<br><br>
+<table>
+  <tr><th>Phase</th><th>Description</th><th>Energy State</th></tr>
+  <tr><td>A</td><td>At rest on platform (top)</td><td>Maximum gravitational PE</td></tr>
+  <tr><td>B</td><td>Free fall — cord slack</td><td>KE increasing</td></tr>
+  <tr><td>C</td><td>Cord fully stretched (lowest point)</td><td>Max elastic PE</td></tr>
+  <tr><td>D</td><td>Bouncing upward</td><td>KE increasing again</td></tr>
+</table>`,
+    q:"At the lowest point of the jump (Phase C), which energy transformation best describes what happened between Phase A and Phase C?",
+    choices:[
+      "All gravitational PE has been converted entirely to kinetic energy",
+      "Gravitational PE has been converted to kinetic energy and then to elastic potential energy in the cord",
+      "Chemical energy from the jumper's muscles has been converted to gravitational PE",
+      "Kinetic energy has been converted entirely to gravitational PE at the lowest point"
+    ],
+    correct:1,
+    explanation:"From Phase A (top, maximum gravitational PE) to Phase C (lowest point, zero velocity): gravitational PE first converts to KE during free fall (Phase B), then as the cord stretches, KE converts to elastic PE in the cord. At the very bottom, velocity = 0, so all energy is stored as elastic PE plus any remaining gravitational PE difference. The complete path is: gravitational PE → KE → elastic PE."
+  },
+ {
+  topic:"Forces & Newton's Laws",
+  cluster:"Bungee Jumping",
+  scenario:`<span class="scenario-title">Bungee Jumping — Forces</span>
+A 65 kg bungee jumper is near the bottom of the jump, momentarily moving slowly. The bungee cord is stretched 15 m beyond its natural length. Spring constant k = 40 N/m. At this instant, g = 9.8 m/s².`,
+  q:"At this instant, what is the net force on the jumper and in which direction does it act?",
+  choices:[
+    "Net force = 0 N; the jumper is in equilibrium",
+    "Net force = 37 N downward; gravity is slightly greater than the cord force",
+    "Net force = 600 N upward; the cord force alone is the net force",
+    "Net force = 637 N upward; gravity equals cord force"
+  ],
+  correct:1,
+  explanation:"Cord force upward: F = kx = 40 × 15 = 600 N. Weight downward: Fg = mg = 65 × 9.8 = 637 N. Net force = 637 − 600 = 37 N downward. Since gravity is slightly larger than the upward spring force at this stretch, the net force points downward."
+},
+
+  {
+    topic:"Energy & Work",
+    cluster:"Bungee Jumping",
+    scenario:`<span class="scenario-title">Bungee Jumping — Energy at Lowest Point</span>
+A 65 kg jumper starts at rest 50 m above the lowest point. The bungee cord begins stretching after 20 m of free fall. At the lowest point, the cord is stretched 15 m past its natural length. k = 40 N/m, g = 9.8 m/s².`,
+    q:"Using conservation of energy, what is the elastic potential energy stored in the cord at the lowest point? (Gravitational PE reference = lowest point; take total fall = 35 m below cord attachment)",
+    choices:[
+      "PE_elastic = mgh = 65 × 9.8 × 35 = 22,295 J",
+      "PE_elastic = ½kx² = ½ × 40 × 15² = 4,500 J",
+      "PE_elastic = mgh = 65 × 9.8 × 50 = 31,850 J",
+      "PE_elastic = ½kx² = ½ × 40 × 35² = 24,500 J"
+    ],
+    correct:1,
+    explanation:"Elastic PE stored in a spring/cord: PE = ½kx² = ½ × 40 × (15)² = ½ × 40 × 225 = 4,500 J. This formula comes directly from the Physics Reference Tables. Note: conservation of energy would require total gravitational PE lost = KE gained + elastic PE stored. But the question specifically asks to calculate PE_elastic from the formula, not from energy conservation."
+  },
+  {
+    topic:"Energy & Work",
+    cluster:"Bungee Jumping",
+    scenario:`<span class="scenario-title">Bungee Jumping — Comparing Cord Stiffness</span>
+Two bungee cords are being evaluated for safety: Cord X has k = 40 N/m; Cord Y has k = 80 N/m. Both are tested with the same 65 kg jumper from the same height. The cord that stores more elastic PE at the same stretch distance will stop the jumper at a higher point (safer — less risk of hitting ground).`,
+    q:"A student claims: 'A stiffer cord (higher k) stores more elastic PE for the same stretch, so it is safer.' Which statement correctly evaluates this claim using PE = ½kx²?",
+    choices:[
+      "The claim is incorrect — stiffer cords always break at smaller stretches",
+      "The claim is correct — for the same stretch distance x, higher k gives greater PE = ½kx²",
+      "The claim is incorrect — PE depends only on the jumper's mass, not k",
+      "The claim is correct — but only when x > 10 m"
+    ],
+    correct:1,
+    explanation:"PE = ½kx². For the same stretch x: if k doubles (40 → 80), PE doubles (½ × 80 × x² vs ½ × 40 × x²). A stiffer cord stores more elastic PE per meter of stretch, meaning it can stop a jumper in a shorter distance. This makes the claim correct — stiffer cords are more effective at stopping jumpers at higher points. The Physics Reference Tables show PE_spring = ½kx²."
+  },
+  {
+    topic:"Energy & Work",
+    cluster:"Bungee Jumping",
+    scenario:`<span class="scenario-title">Bungee Jumping — Energy Conservation</span>
+A 65 kg bungee jumper at the top has gravitational PE = mgh = 65 × 9.8 × 50 = 31,850 J relative to the lowest point. In a real jump, energy is lost to air resistance and cord heating.`,
+    q:"In a real bungee jump (with energy losses), the jumper bounces to a height LESS than the starting height. Which statement best explains this using energy conservation?",
+    choices:[
+      "Energy was destroyed during the jump — the law of conservation of energy is violated",
+      "The jumper's mass decreases during the jump, reducing the rebound height",
+      "Mechanical energy (PE + KE) decreased because some energy was converted to thermal energy (heat) and sound — total energy is conserved but not all is mechanical",
+      "Gravity did negative work going up and positive work going down, creating a net energy loss"
+    ],
+    correct:2,
+    explanation:"Energy is always conserved (Law of Conservation of Energy). In a real jump, some mechanical energy is converted to thermal energy (cord stretching/heating, air resistance friction) and sound. Total energy is still conserved — it just isn't all mechanical. The jumper rises to a lower height because less mechanical energy is available for each rebound. This is why the bounces get smaller and smaller until the jumper hangs at rest."
+  },
+ 
+  // ═══════════════════════════════════════════════════════════
+  // CLUSTER: AUTOMOTIVE OPTICS (2026 NYSSLS Official Sample)
+  // ═══════════════════════════════════════════════════════════
+  {
+    topic:"Waves & Optics",
+    cluster:"Automotive Optics",
+    scenario:`<span class="scenario-title">Automotive Optics — Headlights and Reflectors</span>
+Modern car headlights use a concave parabolic reflector placed behind the bulb. The light source (bulb) is positioned at the focal point of the reflector. Light rays from the bulb hit the reflector and are reflected outward as a parallel beam. The reflector uses the law of reflection: angle of incidence = angle of reflection, measured from the normal to the surface.`,
+    q:"Why is the bulb placed at the focal point of a concave parabolic reflector in a headlight?",
+    choices:[
+      "Light at the focal point is absorbed more efficiently, reducing glare",
+      "Placing the source at the focal point causes all reflected rays to emerge parallel to the principal axis, producing a concentrated beam",
+      "The focal point is the only location where the bulb fits mechanically",
+      "Light from the focal point reflects directly back to the source, doubling the brightness"
+    ],
+    correct:1,
+    explanation:"A parabolic concave mirror has a unique property: any ray from the focal point reflects parallel to the principal axis (and vice versa). By placing the bulb at the focal point, all light rays hitting the reflector are redirected into a parallel beam aimed straight ahead. This maximizes the light intensity in the driving direction. This is the optical principle used in headlights, flashlights, and satellite dishes."
+  },
+  {
+    topic:"Waves & Optics",
+    cluster:"Automotive Optics",
+    scenario:`<span class="scenario-title">Automotive Optics — Rearview Mirrors</span>
+Convex mirrors are used as passenger-side rearview mirrors ("Objects in mirror are closer than they appear"). A convex mirror has a focal point behind the mirror surface (virtual focus). For a convex mirror: 1/f = 1/do + 1/di, where f is negative (virtual focus).
+<br><br>
+Properties of images in convex mirrors: always virtual, upright, and smaller than the object.`,
+    q:"Why do passenger-side convex rearview mirrors make objects appear smaller and farther away than they actually are?",
+    choices:[
+      "Convex mirrors absorb more light, making objects appear dimmer and smaller",
+      "The curved surface of a convex mirror diverges reflected rays, creating a smaller virtual image that appears farther behind the mirror",
+      "Objects in convex mirrors are always inverted, making them appear farther away",
+      "Convex mirrors magnify objects, but the glass tint reduces apparent brightness"
+    ],
+    correct:1,
+    explanation:"A convex mirror diverges incoming parallel light rays (spreads them out). This divergence creates a virtual image that is always smaller than the object and appears located behind the mirror. Because the image is smaller, our brain interprets the object as being farther away. This is a deliberate design tradeoff: the convex shape provides a wider field of view (covering more area) at the cost of accurate distance perception — hence the warning label."
+  },
+  {
+    topic:"Waves & Optics",
+    cluster:"Automotive Optics",
+    scenario:`<span class="scenario-title">Automotive Optics — Anti-Glare Coatings</span>
+Car windshields use thin-film anti-reflective coatings to reduce glare. These coatings work by destructive interference: a thin film causes reflected light waves from the front and back surfaces to be out of phase (180° or half wavelength out of phase), so they cancel each other. The coating thickness = λ/4 (quarter wavelength of the light to be eliminated).`,
+    q:"A windshield coating is designed to eliminate reflected light with wavelength 550 nm (green light). What thickness should the coating be?",
+    choices:[
+      "550 nm",
+      "275 nm",
+      "1100 nm",
+      "137.5 nm"
+    ],
+    correct:3,
+    explanation:"For destructive interference with a thin film (anti-reflective coating), the film thickness = λ/4. λ = 550 nm, so thickness = 550/4 = 137.5 nm. This causes the wave reflected from the top surface to travel exactly half a wavelength (λ/2) more than the wave reflected from the bottom surface (going down λ/4 and back up λ/4 = λ/2 extra path). The two waves are exactly out of phase and cancel by destructive interference."
+  },
+  {
+    topic:"Waves & Optics",
+    cluster:"Automotive Optics",
+    scenario:`<span class="scenario-title">Automotive Optics — LED vs Incandescent Headlights</span>
+Car manufacturers are replacing incandescent bulbs with LEDs. Data comparing two headlight types:
+<br><br>
+<table>
+  <tr><th>Property</th><th>Incandescent</th><th>LED</th></tr>
+  <tr><td>Power consumed (W)</td><td>60</td><td>12</td></tr>
+  <tr><td>Light output (lumens)</td><td>800</td><td>800</td></tr>
+  <tr><td>Lifespan (hours)</td><td>1,000</td><td>25,000</td></tr>
+  <tr><td>Heat generated</td><td>High</td><td>Low</td></tr>
+</table>`,
+    q:"Based on the data, what is the luminous efficiency (lumens per watt) of the LED headlight compared to the incandescent?",
+    choices:[
+      "LED: 13.3 lm/W; Incandescent: 66.7 lm/W — incandescent is more efficient",
+      "LED: 66.7 lm/W; Incandescent: 13.3 lm/W — LED is 5× more efficient",
+      "Both produce 800 lumens, so both have equal efficiency",
+      "LED: 800 lm/W; Incandescent: 60 lm/W — LED efficiency is much higher"
+    ],
+    correct:1,
+    explanation:"Luminous efficiency = lumens ÷ watts. LED: 800 ÷ 12 = 66.7 lm/W. Incandescent: 800 ÷ 60 = 13.3 lm/W. The LED produces the same amount of light using only 1/5 the power — it is 5× more energy efficient. The 'missing' energy in the incandescent is released as heat (infrared radiation), not visible light. This is why incandescents are warm to the touch and LEDs are not."
+  },
+  {
+    topic:"Waves & Optics",
+    cluster:"Automotive Optics",
+    scenario:`<span class="scenario-title">Automotive Optics — Engineering Tradeoffs</span>
+Engineers are selecting a mirror type for a new vehicle's driver-assist system. The system uses cameras and mirrors to monitor blind spots. Two options:
+<br>Option P: Flat mirror — accurate distances, limited field of view (15°)
+<br>Option Q: Convex mirror — wider field of view (45°), but distances appear farther than reality`,
+    q:"A safety engineer argues that Option Q is better for a blind-spot monitoring system. Which reasoning best supports this claim?",
+    choices:[
+      "Option Q is better because convex mirrors are cheaper to manufacture",
+      "Option Q is better because a wider field of view (45°) covers more of the blind spot, reducing the chance of missing a vehicle, which outweighs the distance-perception drawback",
+      "Option Q is better because flat mirrors produce distorted images in bright sunlight",
+      "Option P is better because accurate distance measurement is always more important than field of view"
+    ],
+    correct:1,
+    explanation:"This is an engineering tradeoff question. The primary goal of a blind-spot monitor is to detect the presence of vehicles — whether they exist in the blind spot. A 45° field of view (Option Q, convex) covers 3× the area of the 15° flat mirror, dramatically reducing the chance of missing a vehicle. The distance-perception limitation is a known and labeled tradeoff. For presence detection, field of view > distance accuracy. This is the kind of engineering evaluation the 2026 exam expects students to perform."
+  },
+ 
+  // ═══════════════════════════════════════════════════════════
+  // CLUSTER: WORLD RECORD JUMPS (2026 NYSSLS Official Sample)
+  // ═══════════════════════════════════════════════════════════
+  {
+    topic:"Forces & Newton's Laws",
+    cluster:"World Record Jumps",
+    scenario:`<span class="scenario-title">World Record Jumps — Long Jump</span>
+In the 2024 Olympics, an athlete performed a long jump. During the jump, the athlete was airborne for 0.92 s and achieved a horizontal distance of 8.4 m. At takeoff, the athlete's velocity had a horizontal component of 9.1 m/s and a vertical component of 4.5 m/s upward. Assume no air resistance; g = 9.8 m/s².`,
+    q:"What is the athlete's speed at takeoff (the magnitude of the velocity vector at the moment of launch)?",
+    choices:[
+      "9.1 m/s — only horizontal velocity matters for range",
+      "13.6 m/s — add horizontal and vertical components",
+      "10.1 m/s — use the Pythagorean theorem: √(9.1² + 4.5²)",
+      "4.5 m/s — only vertical velocity determines flight time"
+    ],
+    correct:2,
+    explanation:"Speed = magnitude of velocity vector = √(vₓ² + vᵧ²) = √(9.1² + 4.5²) = √(82.81 + 20.25) = √103.06 ≈ 10.2 m/s ≈ 10.1 m/s. Vector components are combined using the Pythagorean theorem because they are perpendicular. You cannot simply add them (that gives the wrong scalar sum of 13.6 m/s). The Reference Tables include v = √(vₓ² + vᵧ²)."
+  },
+  {
+    topic:"Forces & Newton's Laws",
+    cluster:"World Record Jumps",
+    scenario:`<span class="scenario-title">World Record Jumps — Projectile Motion</span>
+A high jumper clears a bar set at 2.45 m. The athlete's center of mass rises from 1.0 m (ground level) to 2.6 m at peak. g = 9.8 m/s². Assume vertical motion only for this calculation.`,
+    q:"What minimum vertical velocity must the athlete have at takeoff to reach a peak height of 2.6 m above the ground (Δh = 1.6 m rise)?",
+    choices:[
+      "v = √(2gΔh) = √(2 × 9.8 × 1.6) = 5.6 m/s",
+      "v = gΔh = 9.8 × 1.6 = 15.7 m/s",
+      "v = √(gΔh) = √(9.8 × 1.6) = 3.96 m/s",
+      "v = 2gΔh = 2 × 9.8 × 1.6 = 31.4 m/s"
+    ],
+    correct:0,
+    explanation:"Using kinematics: v² = v₀² + 2aΔy. At peak, v = 0. 0 = v₀² + 2(−9.8)(1.6). v₀² = 2 × 9.8 × 1.6 = 31.36. v₀ = √31.36 = 5.6 m/s. Alternatively: KE = PE → ½mv² = mgΔh → v = √(2gΔh) = √(2 × 9.8 × 1.6) = 5.6 m/s. This kinematics equation is on the Physics Reference Tables."
+  },
+  {
+    topic:"Forces & Newton's Laws",
+    cluster:"World Record Jumps",
+    scenario:`<span class="scenario-title">World Record Jumps — Forces During Takeoff</span>
+A 70 kg sprinter leaves the ground during a long jump. During the takeoff phase (lasting 0.15 s), the ground exerts an average upward normal force of 2,100 N on the athlete. g = 9.8 m/s².`,
+    q:"What is the net upward force on the athlete during takeoff, and what vertical acceleration does it produce?",
+    choices:[
+      "Net force = 2,100 N upward; a = 30 m/s² upward",
+      "Net force = 2,100 − (70 × 9.8) = 1,414 N upward; a = 20.2 m/s² upward",
+      "Net force = 2,100 + 686 = 2,786 N upward; a = 39.8 m/s²",
+      "Net force = 0 N; the athlete is in equilibrium during takeoff"
+    ],
+    correct:1,
+    explanation:"Net force = F_normal − F_gravity = 2,100 − mg = 2,100 − (70 × 9.8) = 2,100 − 686 = 1,414 N upward. Then from Newton's Second Law: F_net = ma → a = F_net/m = 1,414/70 = 20.2 m/s² upward. The ground must push harder than gravity to accelerate the athlete upward. If normal force = weight, the athlete would just stand still (equilibrium)."
+  },
+  {
+    topic:"Forces & Newton's Laws",
+    cluster:"World Record Jumps",
+    scenario:`<span class="scenario-title">World Record Jumps — Horizontal Range</span>
+An athlete launches at 10.1 m/s at an angle of 26° above the horizontal. The horizontal velocity component is vₓ = 9.1 m/s and remains constant throughout the flight (no air resistance). The athlete is airborne for 0.92 s.`,
+    q:"What is the horizontal range of the jump?",
+    choices:[
+      "R = vₓ × t = 9.1 × 0.92 = 8.4 m",
+      "R = v × t = 10.1 × 0.92 = 9.3 m",
+      "R = ½ × vₓ × t = ½ × 9.1 × 0.92 = 4.2 m",
+      "R = vᵧ × t = 4.5 × 0.92 = 4.1 m"
+    ],
+    correct:0,
+    explanation:"For projectile motion with no air resistance, horizontal velocity is constant throughout the flight. Range = horizontal velocity × time = vₓ × t = 9.1 × 0.92 = 8.4 m. The horizontal and vertical motions are independent. Only vₓ determines horizontal range; gravity only affects the vertical component."
+  },
+  {
+    topic:"Forces & Newton's Laws",
+    cluster:"World Record Jumps",
+    scenario:`<span class="scenario-title">World Record Jumps — Gravity on the Moon</span>
+The Moon's gravitational acceleration is g_moon = 1.62 m/s². An astronaut on the Moon attempts a long jump with the same takeoff speed and angle as the Earth record (vₓ = 9.1 m/s, vᵧ = 4.5 m/s upward).`,
+    q:"On the Moon, the flight time would be longer than on Earth. Which statement correctly predicts whether the Moon jump would be farther?",
+    choices:[
+      "The Moon jump would be shorter — lower gravity means lower speed",
+      "The Moon jump would be the same — horizontal velocity determines range",
+      "The Moon jump would be much farther — lower gravity means longer flight time, and range = vₓ × t, so greater t gives greater range",
+      "The Moon jump would be farther only if the athlete weighs less than 70 kg"
+    ],
+    correct:2,
+    explanation:"Flight time depends on vertical deceleration: t = 2vᵧ/g. On Earth: t = 2(4.5)/9.8 = 0.92 s. On Moon: t = 2(4.5)/1.62 = 5.56 s. Range = vₓ × t = 9.1 × 5.56 = 50.6 m! The Moon jump would be about 6× farther. Lower gravity means much longer flight time, and since horizontal velocity stays the same, the range increases dramatically. This is why astronaut footage on the Moon shows them bounding huge distances."
+  },
+ 
+  // ═══════════════════════════════════════════════════════════
+  // KINEMATICS (Traditional Regents Questions)
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Kinematics",q:"A car accelerates uniformly from rest to 24 m/s in 8.0 s. What is its acceleration?",choices:["1.0 m/s²","2.0 m/s²","3.0 m/s²","4.0 m/s²"],correct:2,explanation:"a = Δv/t = (24 − 0)/8.0 = 3.0 m/s². From the Reference Tables: a = Δv/Δt. The car starts from rest (v₀ = 0) and reaches 24 m/s in 8 seconds."},
+  {topic:"Kinematics",q:"A ball is thrown horizontally from a cliff with speed 15 m/s. How far does it travel horizontally before hitting the ground 4.0 s later?",choices:["30 m","45 m","60 m","80 m"],correct:2,explanation:"Horizontal distance = vₓ × t = 15 × 4.0 = 60 m. In projectile motion, horizontal velocity is constant (no air resistance), so the horizontal distance is simply speed × time."},
+  {topic:"Kinematics",q:"An object in free fall (starting from rest) falls for 3.0 s. What distance has it fallen? (g = 9.8 m/s²)",choices:["14.7 m","29.4 m","44.1 m","88.2 m"],correct:2,explanation:"d = ½gt² = ½ × 9.8 × 3.0² = ½ × 9.8 × 9 = 44.1 m. From Reference Tables: d = v₀t + ½at², with v₀ = 0 and a = g = 9.8 m/s²."},
+  {topic:"Kinematics",q:"A car travels 120 m in 8.0 s, then 80 m in 4.0 s. What is its average speed for the entire trip?",choices:["16.7 m/s","20.0 m/s","22.5 m/s","17.5 m/s"],correct:0,explanation:"Average speed = total distance / total time = (120 + 80)/(8.0 + 4.0) = 200/12 = 16.7 m/s. Average speed is NOT the average of the two individual speeds — you must use total distance and total time."},
+  {topic:"Kinematics",q:"A velocity-time graph shows a straight line with a positive slope from t = 0 to t = 5 s. This describes an object that is:",choices:["Moving at constant speed","Decelerating uniformly","Accelerating uniformly","At rest"],correct:2,explanation:"A straight line on a v-t graph means constant acceleration (slope = Δv/Δt = acceleration). A positive slope means the object is speeding up (uniformly accelerating). A horizontal line on a v-t graph would indicate constant speed; a curve would indicate changing acceleration."},
+  {topic:"Kinematics",q:"A stone is dropped from a bridge. It hits the water 2.5 s later. How high is the bridge above the water? (g = 9.8 m/s²)",choices:["24.5 m","30.6 m","49.0 m","61.3 m"],correct:1,explanation:"h = ½gt² = ½ × 9.8 × (2.5)² = ½ × 9.8 × 6.25 = 30.6 m. The stone is dropped (v₀ = 0) so only gravity acts."},
+  {topic:"Kinematics",q:"A runner completes a circular track of diameter 400 m in 80 s. What is the runner's displacement after completing exactly one full lap?",choices:["400 m","1,257 m","0 m","800 m"],correct:2,explanation:"Displacement is the straight-line distance from start to finish. After one complete lap, the runner returns to the starting point — displacement = 0. This is a classic distinction: distance (total path length = circumference ≈ 1,257 m) vs. displacement (zero for a complete loop)."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // FORCES & NEWTON'S LAWS
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Forces & Newton's Laws",q:"A 5.0 kg object is pushed with a net force of 20 N. What is its acceleration?",choices:["0.25 m/s²","4.0 m/s²","15 m/s²","100 m/s²"],correct:1,explanation:"Newton's Second Law: F = ma → a = F/m = 20/5.0 = 4.0 m/s². This is the most fundamental equation in mechanics. Units: N = kg·m/s², so 20 N / 5 kg = 4 m/s²."},
+  {topic:"Forces & Newton's Laws",q:"A 60 kg person stands on a scale in an elevator accelerating upward at 2.0 m/s². What does the scale read? (g = 9.8 m/s²)",choices:["468 N","588 N","708 N","120 N"],correct:2,explanation:"Scale reads apparent weight = m(g + a) = 60 × (9.8 + 2.0) = 60 × 11.8 = 708 N. When accelerating upward, you feel heavier. The scale reads the normal force, which must supply both supporting weight AND providing upward acceleration."},
+  {topic:"Forces & Newton's Laws",q:"A hockey puck slides on frictionless ice at constant velocity. The net force on the puck is:",choices:["Equal to its weight","In the direction of motion","Zero — Newton's First Law","Equal to friction force"],correct:2,explanation:"Newton's First Law (Law of Inertia): an object in motion stays in motion at constant velocity unless acted on by a net force. On frictionless ice, no horizontal forces act — net force = 0. The puck continues at constant speed and direction."},
+  {topic:"Forces & Newton's Laws",q:"Two forces act on an object: 30 N east and 40 N north. What is the magnitude of the net force?",choices:["10 N","35 N","50 N","70 N"],correct:2,explanation:"The forces are perpendicular (east and north), so use the Pythagorean theorem: F_net = √(30² + 40²) = √(900 + 1600) = √2500 = 50 N. This is a 3-4-5 right triangle scaled by 10."},
+  {topic:"Forces & Newton's Laws",q:"According to Newton's Third Law, when a horse pulls a cart forward, the cart:",choices:["Pulls the horse backward with the same force","Pushes the horse forward with less force","Experiences no reaction force from the horse","Pulls the horse backward with greater force"],correct:0,explanation:"Newton's Third Law: for every action, there is an equal and opposite reaction. The cart pulls the horse backward with the exact same magnitude of force as the horse pulls the cart forward. These forces act on different objects (horse ↔ cart) and never cancel each other."},
+  {topic:"Forces & Newton's Laws",q:"A 10 kg box sits on a table. The table pushes up on the box with 98 N. What is the weight of the box? (g = 9.8 m/s²)",choices:["9.8 N","49 N","98 N","980 N"],correct:2,explanation:"Weight = mg = 10 × 9.8 = 98 N downward. The table's normal force (98 N up) balances the weight (98 N down), so net force = 0 — the box is in equilibrium (not accelerating). Weight and normal force are equal here but they are NOT a Newton's 3rd Law pair (they act on the same object)."},
+  {topic:"Forces & Newton's Laws",q:"A 2,000 kg car brakes from 30 m/s to rest in 6.0 s. What braking force was applied?",choices:["6,000 N","10,000 N","333 N","12,000 N"],correct:1,explanation:"a = Δv/t = (0 − 30)/6 = −5 m/s². F = ma = 2000 × 5 = 10,000 N. The negative sign indicates deceleration, but force magnitude = 10,000 N."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // ENERGY, WORK & POWER
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Energy & Work",q:"How much work is done pushing a 500 N box 10 m along a frictionless floor with a horizontal force of 200 N?",choices:["5,000 J","2,000 J","700 J","0 J"],correct:1,explanation:"W = F × d = 200 N × 10 m = 2,000 J. Work = force × displacement in the direction of force. The box's weight (500 N) doesn't do work because it's perpendicular to the motion. The normal force also doesn't do work for the same reason."},
+  {topic:"Energy & Work",q:"A 2 kg ball is held 5 m above the ground. What is its gravitational potential energy? (g = 9.8 m/s²)",choices:["10 J","49 J","98 J","196 J"],correct:2,explanation:"PE = mgh = 2 × 9.8 × 5 = 98 J. The reference level is the ground (h = 0). Gravitational PE depends on height above a reference point, mass, and g."},
+  {topic:"Energy & Work",q:"A motor lifts a 200 N load 8.0 m in 4.0 s. What is the power output of the motor?",choices:["100 W","400 W","6,400 W","1,600 W"],correct:1,explanation:"Power = Work/time = (F × d)/t = (200 × 8.0)/4.0 = 1600/4 = 400 W. Alternatively: P = F × v = 200 × (8/4) = 200 × 2 = 400 W."},
+  {topic:"Energy & Work",q:"A 1,000 kg roller coaster car is at the top of a 30 m hill. Assuming no friction, what is its speed at the bottom? (g = 9.8 m/s²)",choices:["9.8 m/s","17.1 m/s","24.2 m/s","588 m/s"],correct:2,explanation:"Conservation of energy: mgh = ½mv² → v = √(2gh) = √(2 × 9.8 × 30) = √588 = 24.2 m/s. The mass cancels — speed at the bottom depends only on height, not mass."},
+  {topic:"Energy & Work",q:"A 3 kg object moving at 4 m/s has what kinetic energy?",choices:["6 J","12 J","24 J","48 J"],correct:2,explanation:"KE = ½mv² = ½ × 3 × 4² = ½ × 3 × 16 = 24 J. Note: KE depends on v², not v. Doubling speed quadruples KE."},
+  {topic:"Energy & Work",q:"A machine does 600 J of useful work but requires 800 J of input energy. What is the machine's efficiency?",choices:["60%","75%","80%","133%"],correct:1,explanation:"Efficiency = (useful output / total input) × 100 = (600/800) × 100 = 75%. Efficiency is never greater than 100% — the missing 200 J was lost as heat due to friction or other non-ideal effects."},
+  {topic:"Energy & Work",q:"A spring with k = 200 N/m is compressed 0.3 m from its equilibrium. What elastic PE is stored?",choices:["30 J","9 J","60 J","6 J"],correct:1,explanation:"PE_spring = ½kx² = ½ × 200 × (0.3)² = ½ × 200 × 0.09 = 9 J. The spring formula is ½kx², not kx or kx²."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // MOMENTUM & IMPULSE
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Momentum & Impulse",q:"A 0.5 kg ball moving at 10 m/s east collides with a wall and bounces back at 10 m/s west. What is the change in momentum?",choices:["0 kg·m/s","5 kg·m/s west","10 kg·m/s west","10 kg·m/s east"],correct:2,explanation:"Δp = p_final − p_initial = m×v_f − m×v_i = 0.5×(−10) − 0.5×(+10) = −5 − 5 = −10 kg·m/s (east) = 10 kg·m/s west. Velocity changed direction, so momentum changed by twice the original magnitude."},
+  {topic:"Momentum & Impulse",q:"A 1,200 kg car moving at 20 m/s collides with and sticks to a stationary 800 kg car. What is their combined speed after the collision?",choices:["8 m/s","12 m/s","16 m/s","20 m/s"],correct:1,explanation:"Conservation of momentum: m₁v₁ + m₂v₂ = (m₁+m₂)v_f. 1200(20) + 800(0) = 2000(v_f). v_f = 24000/2000 = 12 m/s. This is a perfectly inelastic collision (they stick together)."},
+  {topic:"Momentum & Impulse",q:"A force of 50 N acts on a 5 kg ball for 3 s. What impulse does the force deliver?",choices:["10 N·s","150 N·s","30 N·s","250 N·s"],correct:1,explanation:"Impulse = F × t = 50 × 3 = 150 N·s. Impulse = change in momentum = Δp = mΔv. Units of N·s = kg·m/s."},
+  {topic:"Momentum & Impulse",q:"A 70 kg astronaut in space throws a 2 kg wrench at 15 m/s relative to the ship. What speed does the astronaut recoil at? (Initially both at rest)",choices:["0.21 m/s","0.43 m/s","1.05 m/s","7.5 m/s"],correct:1,explanation:"Conservation of momentum: total initial p = 0. 0 = m_wrench × v_wrench + m_astro × v_astro. v_astro = −(2 × 15)/70 = −30/70 = −0.43 m/s. The astronaut moves in the opposite direction at 0.43 m/s."},
+  {topic:"Momentum & Impulse",q:"Why do cars have airbags? The physics explanation is:",choices:["Airbags reduce the total change in momentum during a crash","Airbags increase the time of the collision, reducing the average force on the passenger (same impulse over longer time)","Airbags absorb all the kinetic energy, preventing any deceleration","Airbags eliminate the need for seatbelts in frontal crashes"],correct:1,explanation:"Impulse = F × t = Δp. The change in momentum is the same with or without an airbag (you stop either way). But airbags increase the stopping time Δt, so the average force F = Δp/Δt decreases. Same impulse, more time = less peak force on the body, reducing injury. This is also why crash barriers are designed to crumple."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // CIRCULAR MOTION & GRAVITY
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Circular Motion & Gravity",q:"A car rounds a circular curve at constant speed. Which statement is true about the net force?",choices:["Net force is zero because speed is constant","Net force points outward (centrifugal force)","Net force points toward the center of the curve (centripetal)","Net force is in the direction of motion"],correct:2,explanation:"Even at constant speed, circular motion requires a centripetal (center-directed) net force to continuously change the direction of velocity. The car's velocity vector changes direction every instant — this requires a net force pointing toward the center of the circle. Friction between tires and road provides this force."},
+  {topic:"Circular Motion & Gravity",q:"What provides the centripetal force for Earth orbiting the Sun?",choices:["The Sun pushing Earth in its orbit","Gravity between Earth and Sun pulling Earth toward the Sun","Earth's rotation about its own axis","The 'centrifugal force' pushing Earth outward"],correct:1,explanation:"Gravity between Earth and the Sun provides the centripetal force that keeps Earth in orbit. Gravity always points toward the center of the gravitational source (the Sun) — exactly the direction required for centripetal acceleration. There is no centrifugal force; that's a perceived effect in rotating reference frames."},
+  {topic:"Circular Motion & Gravity",q:"If the radius of a circular orbit doubles while the speed stays the same, how does the centripetal acceleration change?",choices:["It doubles","It quadruples","It is halved","It stays the same"],correct:2,explanation:"Centripetal acceleration a_c = v²/r. If r doubles and v stays the same: a_c = v²/(2r) = (1/2)(v²/r). The acceleration is halved. Doubling radius while maintaining speed requires less centripetal force/acceleration because the curve is gentler."},
+  {topic:"Circular Motion & Gravity",q:"Two planets orbit the same star. Planet A is twice as far from the star as Planet B. How does Planet A's gravitational attraction to the star compare to Planet B's? (Assume equal masses)",choices:["1/2 as strong","1/4 as strong","2× stronger","4× stronger"],correct:1,explanation:"Newton's Law of Universal Gravitation: F = Gm₁m₂/r². If r doubles, r² quadruples, so F is multiplied by 1/4. Gravity follows an inverse-square law — double the distance means 1/4 the gravitational force."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // WAVES & SOUND
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Waves & Optics",q:"A wave has frequency 400 Hz and wavelength 0.85 m. What is its speed?",choices:["0.002 m/s","34 m/s","340 m/s","470 m/s"],correct:2,explanation:"v = fλ = 400 × 0.85 = 340 m/s. This is the speed of sound in air at room temperature — a sanity check that confirms the answer. v = fλ is on the Physics Reference Tables."},
+  {topic:"Waves & Optics",q:"The Doppler effect causes an ambulance siren to sound higher-pitched as it approaches you. This is because:",choices:["The ambulance siren gets louder as it approaches","Sound waves are compressed (shorter wavelength) in front of the moving ambulance, increasing the frequency you hear","The ambulance moves faster than sound","Sound waves travel faster toward you when the source is moving"],correct:1,explanation:"As the ambulance moves toward you, each successive sound wave is emitted from a position slightly closer to you than the last. This compresses the wave fronts in front of the ambulance, decreasing wavelength and increasing apparent frequency (higher pitch). Behind the ambulance, wave fronts spread out — lower frequency (lower pitch). Sound speed doesn't change; wavelength does."},
+  {topic:"Waves & Optics",q:"A transverse wave travels through a rope. The particles of the rope move:",choices:["In the direction the wave travels","Opposite to the direction the wave travels","Perpendicular to the direction the wave travels","In circles around the wave direction"],correct:2,explanation:"In a transverse wave, particles oscillate perpendicular (at 90°) to the direction of wave travel. Examples: water waves, light, rope waves. Compare to longitudinal waves (sound), where particles oscillate parallel to the wave direction (compression and rarefaction)."},
+  {topic:"Waves & Optics",q:"Two waves are in phase and have equal amplitudes when they meet. The resulting wave has:",choices:["Zero amplitude (destructive interference)","Amplitude equal to one wave (unchanged)","Double the original amplitude (constructive interference)","Half the original amplitude"],correct:2,explanation:"When two waves meet in phase (crests aligned, troughs aligned), they undergo constructive interference. The amplitudes add: if each has amplitude A, the resultant has amplitude 2A. If they were completely out of phase (180°), the amplitudes would cancel (destructive interference, amplitude = 0)."},
+  {topic:"Waves & Optics",q:"A student stands 50 m from a wall and claps. The echo returns in 0.29 s. What is the speed of sound?",choices:["172 m/s","290 m/s","344 m/s","580 m/s"],correct:2,explanation:"The sound travels 50 m to the wall and 50 m back = 100 m total. Speed = d/t = 100/0.29 = 344 m/s. Be careful: the echo requires the sound to travel twice the distance to the wall."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // ELECTRICITY & MAGNETISM
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Electricity & Magnetism",q:"Three 6 Ω resistors are connected in series. What is the total resistance?",choices:["2 Ω","6 Ω","18 Ω","0.5 Ω"],correct:2,explanation:"For series resistors: R_total = R₁ + R₂ + R₃ = 6 + 6 + 6 = 18 Ω. In a series circuit, resistances add directly. Each resistor reduces the current flow through the entire circuit."},
+  {topic:"Electricity & Magnetism",q:"A 12 V battery is connected to a 4 Ω resistor. What current flows? (Ohm's Law)",choices:["3 A","48 A","0.33 A","8 A"],correct:0,explanation:"Ohm's Law: V = IR → I = V/R = 12/4 = 3 A. This is the most fundamental formula in circuits. V in volts, I in amperes, R in ohms."},
+  {topic:"Electricity & Magnetism",q:"Two resistors (4 Ω and 12 Ω) are connected in parallel. What is the equivalent resistance?",choices:["16 Ω","8 Ω","3 Ω","6 Ω"],correct:2,explanation:"For parallel: 1/R = 1/R₁ + 1/R₂ = 1/4 + 1/12 = 3/12 + 1/12 = 4/12. R = 12/4 = 3 Ω. In parallel circuits, total resistance is always LESS than the smallest individual resistor."},
+  {topic:"Electricity & Magnetism",q:"A light bulb operates at 120 V and draws 0.5 A. What is its power consumption?",choices:["0.004 W","60 W","240 W","600 W"],correct:1,explanation:"P = IV = 0.5 × 120 = 60 W. This is a standard 60-watt bulb. Alternative formulas: P = I²R = V²/R. All are equivalent via Ohm's Law."},
+  {topic:"Electricity & Magnetism",q:"Which statement correctly describes how a magnetic field exerts force on a moving charge?",choices:["A stationary charge in a magnetic field experiences a force","A moving charge in a magnetic field experiences a force perpendicular to both its velocity and the field","A magnetic field exerts force parallel to the charge's velocity","Magnetic force acts only on neutral particles"],correct:1,explanation:"The magnetic force on a moving charge: F = qvB (sin θ). The force is perpendicular to both the velocity and the magnetic field (given by the right-hand rule). Crucially, a stationary charge (v = 0) experiences NO magnetic force — only moving charges interact with magnetic fields magnetically."},
+  {topic:"Electricity & Magnetism",q:"In a circuit, if voltage is kept constant and resistance doubles, what happens to the current?",choices:["Current doubles","Current quadruples","Current is halved","Current stays the same"],correct:2,explanation:"Ohm's Law: I = V/R. If V is constant and R doubles: I_new = V/(2R) = (1/2)(V/R) = I/2. Current is halved. Resistance and current are inversely proportional at constant voltage."},
+  {topic:"Electricity & Magnetism",q:"An electron (negative charge) moves east through a magnetic field pointing north. Using the right-hand rule for positive charges (and flipping for negative), the magnetic force on the electron points:",choices:["Upward","Downward","West","East"],correct:1,explanation:"For a positive charge, use the right-hand rule: velocity east and magnetic field north gives a force upward. An electron has negative charge, so the force is in the opposite direction. Therefore, the magnetic force on the electron points downward."
+
+  {topic:"Electricity & Magnetism",q:"A generator converts mechanical energy to electrical energy. This device operates on the principle of:",choices:["Electrostatic induction","Electromagnetic induction (changing magnetic flux induces EMF)","Static electricity","Photoelectric effect"],correct:1,explanation:"Electromagnetic induction (Faraday's Law): a changing magnetic flux through a coil induces an EMF (voltage). A generator rotates a coil in a magnetic field, continuously changing the flux, which drives current. This is the fundamental principle behind power plants, alternators, and electrical generation worldwide."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // LIGHT & OPTICS
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Waves & Optics",q:"Light travels from air into glass (higher index of refraction). It bends:",choices:["Away from the normal","Toward the normal","Parallel to the surface","No bending occurs"],correct:1,explanation:"Snell's Law: n₁sinθ₁ = n₂sinθ₂. When light enters a denser medium (higher n), it slows down and bends TOWARD the normal (smaller angle of refraction). When leaving a denser medium, it bends AWAY from the normal (larger angle)."},
+  {topic:"Waves & Optics",q:"What is the speed of light in a medium with index of refraction n = 1.5? (c = 3.0 × 10⁸ m/s)",choices:["4.5 × 10⁸ m/s","3.0 × 10⁸ m/s","2.0 × 10⁸ m/s","1.5 × 10⁸ m/s"],correct:2,explanation:"n = c/v → v = c/n = (3.0 × 10⁸)/1.5 = 2.0 × 10⁸ m/s. The index of refraction is defined as how much light slows down in a medium compared to vacuum. Glass (n≈1.5) slows light to 2/3 of its vacuum speed."},
+  {topic:"Waves & Optics",q:"The electromagnetic spectrum from lowest to highest energy is:",choices:["Gamma, X-ray, UV, visible, IR, microwave, radio","Radio, microwave, IR, visible, UV, X-ray, gamma","Visible, radio, UV, microwave, IR, X-ray, gamma","Gamma, visible, radio, UV, IR, microwave, X-ray"],correct:1,explanation:"The EM spectrum ordered by increasing frequency (and energy): Radio → Microwave → Infrared → Visible → Ultraviolet → X-ray → Gamma. Increasing frequency = increasing energy = decreasing wavelength. Visible light is near the middle of this range."},
+  {topic:"Waves & Optics",q:"A converging (convex) lens is used as a magnifying glass. For magnification, the object must be placed:",choices:["Beyond 2f from the lens","Exactly at f","Within the focal length (between lens and focal point)","Exactly at 2f"],correct:2,explanation:"For a converging lens to act as a magnifying glass, the object must be placed closer than the focal length (between the lens and focal point). This produces a virtual, upright, magnified image on the same side as the object. If the object is beyond f, the image is real and inverted (like a projector)."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // MODERN PHYSICS
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Modern Physics",q:"In the photoelectric effect, increasing the frequency (above threshold) of light on a metal surface increases:",choices:["The number of electrons emitted only","The maximum kinetic energy of emitted electrons","The intensity of emitted light","The threshold frequency"],correct:1,explanation:"Einstein's photoelectric effect: KE_max = hf − φ (work function). Increasing frequency f increases the kinetic energy of emitted electrons. Increasing intensity increases the NUMBER of electrons (more photons) but not their energy. This proved light comes in quantized packets (photons)."},
+  {topic:"Modern Physics",q:"E = mc² relates mass and energy. If 0.001 kg of mass is completely converted to energy, how much energy is released? (c = 3 × 10⁸ m/s)",choices:["3 × 10⁵ J","9 × 10¹³ J","3 × 10⁸ J","9 × 10⁶ J"],correct:1,explanation:"E = mc² = 0.001 × (3 × 10⁸)² = 0.001 × 9 × 10¹⁶ = 9 × 10¹³ J. This enormous energy (90 trillion joules) from just 1 gram of mass explains why nuclear reactions release so much more energy than chemical reactions."},
+  {topic:"Modern Physics",q:"Which particle is NOT found in the nucleus of an atom?",choices:["Proton","Neutron","Electron","Nucleon"],correct:2,explanation:"Electrons orbit the nucleus in energy levels (electron clouds) — they are NOT in the nucleus. The nucleus contains protons and neutrons (collectively called nucleons). The strong nuclear force holds protons and neutrons together against the electrostatic repulsion between protons."},
+  {topic:"Modern Physics",q:"In a nuclear fission reaction, uranium-235 absorbs a neutron and splits into two smaller nuclei. Which statement about this reaction is correct?",choices:["The total mass after fission equals the total mass before fission","The total mass after fission is slightly greater — energy was absorbed","The total mass after fission is slightly less — the 'missing' mass was converted to energy (E = mc²)","The number of protons changes during the reaction"],correct:2,explanation:"In nuclear fission, a tiny amount of mass (called mass defect) is converted to energy according to E = mc². The total mass of products is slightly less than the original mass of uranium + neutron. This small mass difference corresponds to enormous energy release. The number of protons is conserved in total, though individual nuclei change identity."},
+  {topic:"Modern Physics",q:"The de Broglie hypothesis states that particles like electrons have wave-like properties. The de Broglie wavelength λ = h/mv, where h = 6.63×10⁻³⁴ J·s. What happens to an electron's wavelength if its speed doubles?",choices:["Wavelength doubles","Wavelength quadruples","Wavelength is halved","Wavelength stays the same"],correct:2,explanation:"λ = h/mv = h/p (momentum). If speed doubles, momentum doubles (p = mv), so wavelength = h/(2p) = λ/2 — wavelength is halved. Wavelength is inversely proportional to momentum. Faster electrons have shorter wavelengths, which is why electron microscopes can resolve smaller features than light microscopes."},
+  {topic:"Modern Physics",q:"An atom emits a photon of light. This happens when:",choices:["An electron absorbs energy and moves to a higher energy level","An electron drops from a higher to a lower energy level, releasing the energy difference as a photon","The nucleus undergoes alpha decay","An electron gains kinetic energy from heat"],correct:1,explanation:"Atomic emission: when an electron falls from a higher (excited) energy level to a lower level, the energy difference ΔE is released as a photon with frequency f = ΔE/h. This produces the discrete spectral lines unique to each element — the basis of atomic spectroscopy and spectral fingerprinting."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // THERMODYNAMICS
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Thermodynamics",q:"Heat flows spontaneously from a hot object to a cold object until they reach:",choices:["Maximum entropy","Thermal equilibrium — same temperature","Chemical equilibrium","Mechanical equilibrium at different temperatures"],correct:1,explanation:"The Second Law of Thermodynamics / Zeroth Law: heat flows spontaneously from high temperature to low temperature. The process continues until both objects reach the same temperature — thermal equilibrium. At that point, there is no net heat transfer."},
+  {topic:"Thermodynamics",q:"A heat engine absorbs 1,000 J of heat from a hot source and exhausts 600 J to a cold reservoir. What is its efficiency?",choices:["40%","50%","60%","166%"],correct:0,explanation:"Efficiency = W/Q_in = (Q_in − Q_out)/Q_in = (1000 − 600)/1000 = 400/1000 = 40%. No heat engine can be 100% efficient (Second Law). The 600 J exhausted to the cold reservoir is unavoidable waste heat."},
+  {topic:"Thermodynamics",q:"Absolute zero (0 K) is the temperature at which:",choices:["Water freezes at standard pressure","All molecular motion completely stops (minimum possible thermal energy)","All gases liquefy","Entropy equals zero for all substances"],correct:1,explanation:"Absolute zero (0 K = −273.15°C) is the theoretical minimum temperature at which all molecular kinetic energy would be at its minimum (zero-point energy from quantum mechanics prevents truly zero motion). No system can actually reach 0 K (Third Law of Thermodynamics), but scientists have come extremely close."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // ADDITIONAL CLUSTER: ROLLER COASTER PHYSICS
+  // ═══════════════════════════════════════════════════════════
+  {
+    topic:"Energy & Work",
+    cluster:"Roller Coaster Energy",
+    scenario:`<span class="scenario-title">Roller Coaster Energy Analysis</span>
+A 500 kg roller coaster car starts from rest at point A (height = 40 m). It rolls down to point B (height = 0, ground level), then up to point C (height = 15 m). Assume no friction. g = 9.8 m/s².
+<br><br>
+<table>
+  <tr><th>Point</th><th>Height (m)</th><th>Speed (m/s)</th></tr>
+  <tr><td>A</td><td>40</td><td>0 (at rest)</td></tr>
+  <tr><td>B</td><td>0</td><td>?</td></tr>
+  <tr><td>C</td><td>15</td><td>?</td></tr>
+</table>`,
+    q:"What is the speed of the roller coaster at point B (ground level)?",
+    choices:[
+      "v = √(2gh) = √(2 × 9.8 × 40) = 28.0 m/s",
+      "v = √(gh) = √(9.8 × 40) = 19.8 m/s",
+      "v = 2gh/m = 2 × 9.8 × 40 / 500 = 1.57 m/s",
+      "v = mgh = 500 × 9.8 × 40 = 196,000 m/s"
+    ],
+    correct:0,
+    explanation:"Conservation of energy: PE_A = KE_B. mgh = ½mv². Mass cancels: v = √(2gh) = √(2 × 9.8 × 40) = √784 = 28.0 m/s. The mass of the car does not affect the speed — this is similar to Galileo's discovery that all objects fall at the same rate. The speed at B depends only on the height dropped."
+  },
+  {
+    topic:"Energy & Work",
+    cluster:"Roller Coaster Energy",
+    scenario:`<span class="scenario-title">Roller Coaster — Speed at Point C</span>
+The roller coaster (500 kg) has 196,000 J of total mechanical energy at point A. At point C (h = 15 m), some energy is PE and the rest is KE. g = 9.8 m/s².`,
+    q:"What is the speed of the roller coaster at point C (height = 15 m)?",
+    choices:[
+      "v = √(2g × 15) = 17.1 m/s",
+      "v = √(2g(h_A − h_C)) = √(2 × 9.8 × 25) = 22.1 m/s",
+      "v = √(2g × 40) = 28.0 m/s",
+      "v = 0 m/s — the car stops at C because it has gone uphill"
+    ],
+    correct:1,
+    explanation:"Conservation of energy from A to C: mgh_A = mgh_C + ½mv². v = √(2g(h_A − h_C)) = √(2 × 9.8 × (40 − 15)) = √(2 × 9.8 × 25) = √490 = 22.1 m/s. Only the HEIGHT DIFFERENCE matters, not the absolute height. The car still has plenty of KE at C since it is lower than A."
+  },
+  {
+    topic:"Energy & Work",
+    cluster:"Roller Coaster Energy",
+    scenario:`<span class="scenario-title">Roller Coaster — Real vs. Ideal</span>
+In reality, the roller coaster only reaches a speed of 25.0 m/s at point B instead of the theoretical 28.0 m/s. Total mechanical energy at A = 196,000 J.`,
+    q:"How much energy was lost to friction between points A and B?",
+    choices:[
+      "E_lost = ½mv²_actual − mgh_A = ½×500×25² − 196,000 = 156,250 − 196,000 = −39,750 J (39,750 J lost)",
+      "E_lost = mgh_A − ½mv²_actual = 196,000 − ½×500×25² = 196,000 − 156,250 = 39,750 J",
+      "E_lost = ½mv²_ideal − ½mv²_actual = ½×500×28² − ½×500×25² = 196,000 − 156,250 = 39,750 J",
+      "Both B and C are correct ways to find the energy lost"
+    ],
+    correct:3,
+    explanation:"Methods B and C both give the correct answer of 39,750 J lost: Method B: E_lost = E_initial − E_final = 196,000 − ½×500×25² = 196,000 − 156,250 = 39,750 J. Method C: E_ideal − E_actual = ½mv²_ideal − ½mv²_actual = 196,000 − 156,250 = 39,750 J (since PE_A = KE_ideal at B). Both approaches use conservation of energy correctly. The 'lost' energy was converted to heat by friction in the wheels and track."
+  },
+ 
+  // ═══════════════════════════════════════════════════════════
+  // ADDITIONAL CLUSTER: SATELLITE PHYSICS
+  // ═══════════════════════════════════════════════════════════
+  {
+    topic:"Circular Motion & Gravity",
+    cluster:"Satellite Orbits",
+    scenario:`<span class="scenario-title">Satellite Orbits</span>
+The International Space Station (ISS) orbits Earth at an altitude of approximately 400 km above Earth's surface. Earth's radius R_E = 6.4 × 10⁶ m, mass M_E = 5.97 × 10²⁴ kg, G = 6.67 × 10⁻¹¹ N·m²/kg².
+<br><br>
+At this altitude, g ≈ 8.7 m/s² (slightly less than surface g = 9.8 m/s²).`,
+    q:"Astronauts in the ISS experience 'weightlessness' even though Earth's gravity still acts on them. What is the correct explanation?",
+    choices:[
+      "The ISS is far enough from Earth that gravity is negligible",
+      "The ISS shielding blocks Earth's gravitational field",
+      "The astronauts and ISS are in free fall together — both accelerate at the same rate toward Earth, so there is no contact force between them and the floor",
+      "The rotation of the ISS cancels Earth's gravity inside the station"
+    ],
+    correct:2,
+    explanation:"The ISS (and astronauts inside) are in continuous free fall toward Earth — but they also have enough horizontal velocity to keep 'missing' Earth (orbiting). Since both the station and astronauts fall at the same rate (same gravitational acceleration = 8.7 m/s²), there is no normal force between the astronauts and the floor. They float because there is no surface pushing back on them — the same feeling as falling in an elevator with cut cables. Gravity is very much present (it provides centripetal force for the orbit)."
+  },
+  {
+    topic:"Circular Motion & Gravity",
+    cluster:"Satellite Orbits",
+    scenario:`<span class="scenario-title">Satellite Orbits — Orbital Speed</span>
+For a circular orbit, gravity provides the centripetal force: GMm/r² = mv²/r, which simplifies to v = √(GM/r). For the ISS: r = R_E + 400 km = 6.8 × 10⁶ m, GM_E = 3.98 × 10¹⁴ m³/s².`,
+    q:"What is the orbital speed of the ISS?",
+    choices:[
+      "v = √(GM/r) = √(3.98×10¹⁴ / 6.8×10⁶) = 7,650 m/s ≈ 7.7 km/s",
+      "v = GM/r = 3.98×10¹⁴ / 6.8×10⁶ = 5.85×10⁷ m/s",
+      "v = √(GM×r) = √(3.98×10¹⁴ × 6.8×10⁶) = 5.2×10¹⁰ m/s",
+      "v = GMm/r² = the mass of the ISS is needed"
+    ],
+    correct:0,
+    explanation:"v = √(GM/r) = √(3.98×10¹⁴ / 6.8×10⁶) = √(5.85×10⁷) = 7,650 m/s ≈ 7.7 km/s. The ISS travels at about 7.7 kilometers every second — completing one orbit in about 90 minutes. Note that mass of the satellite cancels out (both sides of the centripetal equation have m), so orbital speed is independent of the satellite's mass."
+  },
+ 
+  // ═══════════════════════════════════════════════════════════
+  // ADDITIONAL CLUSTER: ELECTRIC VEHICLES
+  // ═══════════════════════════════════════════════════════════
+  {
+    topic:"Electricity & Magnetism",
+    cluster:"Electric Vehicle Physics",
+    scenario:`<span class="scenario-title">Electric Vehicle Physics</span>
+A 1,500 kg electric vehicle (EV) has a 75 kWh battery pack. The EV motor converts electrical energy to mechanical energy. On a full charge, the EV can travel 350 km.
+<br><br>
+<table>
+  <tr><th>Parameter</th><th>Value</th></tr>
+  <tr><td>Battery capacity</td><td>75 kWh = 2.7 × 10⁸ J</td></tr>
+  <tr><td>Range</td><td>350 km = 350,000 m</td></tr>
+  <tr><td>Top speed</td><td>50 m/s</td></tr>
+  <tr><td>Motor efficiency</td><td>90%</td></tr>
+</table>`,
+    q:"What is the average force required to push the EV against air resistance and road friction over the full 350 km range? (Assume all battery energy goes to overcoming resistance)",
+    choices:[
+      "F = E/d = 2.7×10⁸ / 350,000 = 771 N",
+      "F = E/d = 2.7×10⁸ / 350 = 7.7×10⁵ N",
+      "F = ma = 1500 × 9.8 = 14,700 N",
+      "F = mv²/2d = 1500×50²/(2×350,000) = 5.4 N"
+    ],
+    correct:0,
+    explanation:"Work = Force × distance → F = W/d = E/d = 2.7×10⁸ J / 350,000 m = 771 N. This is the average resistive force the motor must overcome to travel 350 km on a full charge. (If we account for 90% motor efficiency, useful mechanical work = 0.9 × 2.7×10⁸ = 2.43×10⁸ J, giving F ≈ 694 N.) The basic version gives 771 N."},
+  {
+    topic:"Electricity & Magnetism",
+    cluster:"Electric Vehicle Physics",
+    scenario:`<span class="scenario-title">Electric Vehicle — Regenerative Braking</span>
+EVs use regenerative braking: when braking, the motor acts as a generator, converting KE back to electrical energy stored in the battery. The EV (1,500 kg) decelerates from 30 m/s to 0. Generator efficiency = 80%.`,
+    q:"How much electrical energy can be recovered during this braking event?",
+    choices:[
+      "KE = ½mv² = ½×1500×30² = 675,000 J; recovered = 675,000 × 0.8 = 540,000 J",
+      "KE = mv² = 1500×30² = 1,350,000 J; recovered = 1,350,000 × 0.8 = 1,080,000 J",
+      "KE = ½mv² = 675,000 J; recovered = 675,000 J (100% recovery)",
+      "Recovered energy = mgh = 1500 × 9.8 × 30 = 441,000 J"
+    ],
+    correct:0,
+    explanation:"Initial KE = ½mv² = ½ × 1,500 × (30)² = ½ × 1,500 × 900 = 675,000 J. With 80% generator efficiency, recovered energy = 675,000 × 0.80 = 540,000 J = 540 kJ. The remaining 20% (135,000 J) is lost as heat in the generator and braking system. Regenerative braking is why EVs are more efficient in city driving (lots of braking) than highway driving."
+  },
+ 
+  // ═══════════════════════════════════════════════════════════
+  // SCIENTIFIC PRACTICES (2026 NYSSLS emphasis)
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Scientific Practices & Data Analysis",q:"A student drops a ball from 3 different heights and measures the time to fall. The data shows: h = 0.5 m → t = 0.32 s; h = 1.0 m → t = 0.45 s; h = 2.0 m → t = 0.64 s. The student plots h vs. t². Which relationship do the data suggest?",choices:["h is inversely proportional to t²","h is directly proportional to t² (a linear relationship through origin)","h is proportional to t (not t²)","No mathematical relationship exists"],correct:1,explanation:"Check: h/t² ratios: 0.5/0.32² = 0.5/0.102 = 4.9; 1.0/0.45² = 1.0/0.2025 = 4.94; 2.0/0.64² = 2.0/0.41 = 4.88. All ≈ 4.9 ≈ g/2 = 9.8/2. This confirms h = ½gt², so h ∝ t². Plotting h vs. t² gives a straight line through the origin with slope g/2. This is how Galileo deduced the equations of free fall."},
+  {topic:"Scientific Practices & Data Analysis",q:"A student measures the acceleration of gravity by dropping a ball and timing the fall. She gets: 9.6, 9.7, 9.8, 9.7, 9.6 m/s². The accepted value is 9.8 m/s². Which describes her results?",choices:["Precise and accurate","Precise but not accurate — values cluster near 9.7 but consistently below 9.8","Accurate but not precise — scattered around 9.8","Neither precise nor accurate"],correct:1,explanation:"Precision: the five values (9.6, 9.7, 9.8, 9.7, 9.6) are close together — PRECISE. Accuracy: the average = (9.6+9.7+9.8+9.7+9.6)/5 = 48.4/5 = 9.68 m/s², which is slightly below the accepted 9.8 m/s² — slightly inaccurate. The values are consistent (precise) but systematically a bit low (e.g., systematic timing error from starting timer slightly late)."},
+  {topic:"Scientific Practices & Data Analysis",q:"A student claims 'heavier objects fall faster than lighter objects.' Which experiment would best test this claim?",choices:["Drop one heavy object and measure its speed at various heights","Drop a heavy and light object of the same shape simultaneously from the same height in a vacuum and compare arrival times","Measure the terminal velocity of a feather vs. a rock in air","Survey students about what they think happens"],correct:1,explanation:"The best experiment eliminates confounding variables. Dropping both objects in a vacuum eliminates air resistance (which DOES make feathers fall slower in air). Same shape, same height, vacuum conditions — if they land at the same time, the claim is falsified. This is what Galileo argued (and what the famous Apollo 15 hammer-feather demonstration showed on the Moon). The key word is 'vacuum' — in air, shape/drag matters."},
+ {
+  topic:"Scientific Practices & Data Analysis",
+  q:"A physicist derives the equation v = √(2gh) for an object in free fall. A student measures v = 14.1 m/s after falling h = 10 m. What is the percent error? (g = 9.8 m/s²)",
+  choices:["0.7%","1.4%","2.1%","14.0%"],
+  correct:0,
+  explanation:"Theoretical v = √(2 × 9.8 × 10) = √196 = 14.0 m/s. Percent error = |measured − accepted| / accepted × 100 = |14.1 − 14.0| / 14.0 × 100 = 0.71%, which rounds to 0.7%."
+},
+
+  {topic:"Scientific Practices & Data Analysis",q:"A student graphs position vs. time for a moving object and gets a straight line with positive slope. What does this graph tell us about the object's motion?",choices:["The object is accelerating uniformly","The object is moving at constant velocity","The object is stationary","The object is decelerating"],correct:1,explanation:"On a position-time (x vs. t) graph: slope = velocity. A straight line (constant slope) means constant velocity. A curved line (changing slope) means changing velocity = acceleration. A horizontal line means zero velocity (at rest). This is a fundamental graph interpretation skill for the Regents Physics exam."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // FRICTION & INCLINED PLANES
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Forces & Newton's Laws",q:"A 10 kg box slides down a frictionless 30° ramp. What is the acceleration along the ramp? (g = 9.8 m/s²)",choices:["4.9 m/s²","5.66 m/s²","8.49 m/s²","9.8 m/s²"],correct:0,explanation:"On a frictionless incline: a = g sin θ = 9.8 × sin(30°) = 9.8 × 0.5 = 4.9 m/s². The component of gravity along the ramp is g sin θ. For 30°, this is exactly half of g. Note the mass cancels — the acceleration is independent of mass."},
+  {topic:"Forces & Newton's Laws",q:"A block is pushed horizontally with 50 N. The coefficient of kinetic friction is 0.3. The block has mass 10 kg. What is the net force on the block? (g = 9.8 m/s²)",choices:["50 N","20.6 N","29.4 N","15 N"],correct:1,explanation:"Friction force = μₖ × N = μₖ × mg = 0.3 × 10 × 9.8 = 29.4 N. Net force = Applied − Friction = 50 − 29.4 = 20.6 N. The normal force equals mg on a horizontal surface (no vertical acceleration)."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // NUCLEAR & PARTICLE PHYSICS
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Modern Physics",q:"An alpha particle is emitted from uranium-238 (²³⁸₉₂U). What is the daughter nucleus produced?",choices:["²³⁴₉₀Th (Thorium-234)","²³⁴₉₁Pa (Protactinium-234)","²³⁸₉₀Th (Thorium-238)","²³⁶₉₂U (Uranium-236)"],correct:0,explanation:"Alpha decay: parent nucleus → daughter + ⁴₂He. Mass number decreases by 4 (238 → 234) and atomic number decreases by 2 (92 → 90). Z = 90 is Thorium (Th). Product: ²³⁴₉₀Th. Check: 238 = 234 + 4 ✓; 92 = 90 + 2 ✓."},
+  {topic:"Modern Physics",q:"What fundamental force holds protons together in the nucleus despite their mutual electrostatic repulsion?",choices:["Gravitational force","Electromagnetic force","Weak nuclear force","Strong nuclear force"],correct:3,explanation:"The strong nuclear force (also called the strong interaction) is the most powerful fundamental force. It acts over very short distances (within the nucleus, ~10⁻¹⁵ m) and is much stronger than the electrostatic repulsion between protons. Without it, no nucleus with more than one proton could exist. The strong force holds quarks together inside protons and neutrons, and also holds protons and neutrons together in the nucleus."},
+ 
+  // ═══════════════════════════════════════════════════════════
+  // ADDITIONAL STANDALONE QUESTIONS
+  // ═══════════════════════════════════════════════════════════
+  {topic:"Kinematics",q:"A bullet travels 900 m in 3.0 s. Its average speed is:",choices:["300 m/s","270 m/s","3000 m/s","0.003 m/s"],correct:0,explanation:"Average speed = total distance / total time = 900 m / 3.0 s = 300 m/s. This is a straightforward speed calculation. Speed of sound is 343 m/s, so this bullet travels at just below the speed of sound (subsonic)."},
+  {topic:"Energy & Work",q:"Which of the following correctly states the Law of Conservation of Energy?",choices:["Energy can be created but never destroyed","Energy can be destroyed but never created","The total energy in an isolated system remains constant — energy can be transformed but never created or destroyed","Energy is always conserved as mechanical energy only"],correct:2,explanation:"The Law of Conservation of Energy: energy cannot be created or destroyed; it can only be transformed from one form to another. In an isolated system, total energy is constant. This is one of the most fundamental principles in all of physics."},
+  {topic:"Electricity & Magnetism",q:"Which diagram correctly represents electric field lines around a single positive point charge?",choices:["Lines pointing inward toward the charge","Lines pointing outward radially from the charge","Horizontal parallel lines","Circular rings around the charge"],correct:1,explanation:"Electric field lines point in the direction a positive test charge would move. For a positive point charge: the field pushes positive test charges away, so lines point OUTWARD radially in all directions. For a negative charge, field lines point inward. Field line density indicates field strength (closer lines = stronger field)."},
+  {topic:"Waves & Optics",q:"A guitar string vibrates at 440 Hz (concert A). If the string length is doubled (keeping tension constant), the new frequency is approximately:",choices:["880 Hz","440 Hz","220 Hz","110 Hz"],correct:2,explanation:"For a vibrating string: f ∝ 1/L (inverse proportional to length, at constant tension). Doubling the length halves the frequency: 440/2 = 220 Hz. This is why bass guitar strings are longer and produce lower notes, and why pressing a fret (shortening the string) raises the pitch."},
+  {topic:"Thermodynamics",q:"A metal rod and a wooden plank are both at room temperature (20°C). When you touch them, the metal feels colder. The best explanation is:",choices:["The metal IS at a lower temperature than the wood","Metal has a higher thermal conductivity and conducts heat from your hand faster, making your hand lose heat more quickly","Wood is a better insulator so it stays warmer","Your skin has nerves that detect metal differently"],correct:1,explanation:"Both objects are at the same temperature (20°C = room temp). The metal FEELS colder because it has higher thermal conductivity — it conducts heat away from your hand faster, causing your hand to cool rapidly. Your thermal receptors respond to heat flow rate, not absolute temperature. Wood conducts heat slowly, so your hand stays warm. This is why a metal chair feels cold and a foam pad feels warm even in the same room."},
+  {topic:"Forces & Newton's Laws",q:"A satellite in circular orbit maintains constant speed but is constantly accelerating. This seems contradictory. The resolution is:",choices:["The satellite is not actually accelerating — Newton's First Law applies","Speed is constant, but velocity is not — direction changes continuously, requiring centripetal acceleration","The satellite's acceleration is zero because gravity balances the centripetal force","Circular motion requires no force because the speed does not change"],correct:1,explanation:"Acceleration is the rate of change of velocity. Velocity is a vector (magnitude AND direction). In circular motion, speed (magnitude) is constant, but direction changes continuously. Changing direction means changing velocity = acceleration. The centripetal acceleration always points toward the center of the circle. Gravity provides this centripetal force for satellites. This resolves the apparent contradiction."}
+ 
+];
+ 
+// ─── QUIZ LOGIC ───
+const TOPICS=[...new Set(ALL_QUESTIONS.map(q=>q.topic))].sort();
+let selectedTopics=new Set(TOPICS);
+let selectedNum=5,quizQuestions=[],currentIdx=0,score=0,answered=false;
+ 
+const tg=document.getElementById('topic-grid');
+TOPICS.forEach(t=>{
+  const c=document.createElement('button');
+  c.className='topic-chip active';
+  c.textContent=t;
+  c.onclick=()=>toggleTopic(t,c);
+  tg.appendChild(c);
+});
+ 
+function toggleTopic(t,el){
+  if(selectedTopics.has(t)){selectedTopics.delete(t);el.classList.remove('active');}
+  else{selectedTopics.add(t);el.classList.add('active');}
+}
+ 
+function selectNum(n,btn){
+  selectedNum=n;
+  document.querySelectorAll('.num-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('custom-num').value='';
+}
+ 
+function selectCustom(v){
+  document.querySelectorAll('.num-btn').forEach(b=>b.classList.remove('selected'));
+  const n=parseInt(v);
+  if(n>=1&&n<=200)selectedNum=n;
+}
+ 
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+ 
+function startQuiz(){
+  const pool=ALL_QUESTIONS.filter(q=>selectedTopics.has(q.topic));
+  if(!pool.length){alert('Please select at least one topic!');return;}
+  const count=Math.min(selectedNum,pool.length);
+  quizQuestions=shuffle(pool).slice(0,count);
+  currentIdx=0;score=0;answered=false;
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
+  document.getElementById('q-total').textContent=quizQuestions.length;
+  loadQuestion();
+}
+ 
+function loadQuestion(){
+  answered=false;
+  const q=quizQuestions[currentIdx];
+  document.getElementById('q-num').textContent=currentIdx+1;
+  document.getElementById('score-live').textContent=score;
+  document.getElementById('q-topic').textContent=q.topic;
+  document.getElementById('progress-fill').style.width=((currentIdx+1)/quizQuestions.length*100)+'%';
+ 
+  const clusterTag=document.getElementById('q-cluster-tag');
+  if(q.cluster){clusterTag.style.display='inline-block';clusterTag.textContent='📋 '+q.cluster;}
+  else{clusterTag.style.display='none';}
+ 
+  const sb=document.getElementById('scenario-box');
+  if(q.scenario){sb.style.display='block';document.getElementById('scenario-content').innerHTML=q.scenario;}
+  else{sb.style.display='none';}
+ 
+  document.getElementById('q-text').textContent=q.q;
+  const choicesEl=document.getElementById('choices');
+  choicesEl.innerHTML='';
+  ['A','B','C','D'].forEach((l,i)=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.innerHTML=`<span class="choice-letter">${l}</span><span>${q.choices[i]}</span>`;
+    btn.onclick=()=>answer(i);
+    choicesEl.appendChild(btn);
+  });
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('next-btn').className='next-btn';
+  document.getElementById('correct-line').style.display='none';
+}
+ 
+function answer(idx){
+  if(answered)return;
+  answered=true;
+  const q=quizQuestions[currentIdx];
+  const btns=document.querySelectorAll('.choice-btn');
+  btns.forEach(b=>b.disabled=true);
+  const ok=idx===q.correct;
+  if(ok){score++;document.getElementById('score-live').textContent=score;btns[idx].classList.add('correct');}
+  else{btns[idx].classList.add('wrong');btns[q.correct].classList.add('correct');}
+  const fb=document.getElementById('feedback');
+  fb.className='feedback show '+(ok?'correct-fb':'wrong-fb');
+  document.getElementById('fb-icon').textContent=ok?'✅':'❌';
+  document.getElementById('fb-title').textContent=ok?'Correct!':'Not quite…';
+  const cl=document.getElementById('correct-line');
+  if(!ok){cl.style.display='block';cl.textContent=`✓ Correct: ${String.fromCharCode(65+q.correct)}. ${q.choices[q.correct]}`;}
+  else{cl.style.display='none';}
+  document.getElementById('fb-explanation').innerHTML=`<strong>Explanation:</strong> ${q.explanation}`;
+  const nb=document.getElementById('next-btn');
+  nb.className='next-btn show';
+  nb.textContent=currentIdx<quizQuestions.length-1?'Next Question →':'See Results →';
+  nb.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+ 
+function nextQuestion(){
+  currentIdx++;
+  if(currentIdx>=quizQuestions.length)showResults();
+  else{loadQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+}
+ 
+function showResults(){
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('results-screen').style.display='block';
+  const total=quizQuestions.length;
+  const pct=Math.round(score/total*100);
+  document.getElementById('score-fraction').textContent=score+' correct out of '+total;
+  document.getElementById('stat-correct').textContent=score;
+  document.getElementById('stat-wrong').textContent=total-score;
+  document.getElementById('stat-total').textContent=total;
+  const pe=document.getElementById('score-pct');
+  pe.textContent=pct+'%';
+  let emoji,title,subtitle,cls;
+  if(pct>=90){emoji='🚀';title='Outstanding!';subtitle="Physics Regents ready — launch approved!";cls='excellent';}
+  else if(pct>=75){emoji='⚡';title='Great Work!';subtitle='Keep charging — you\'re almost there!';cls='good';}
+  else if(pct>=60){emoji='🔭';title='Good Effort';subtitle='Review the formulas and try again.';cls='okay';}
+  else{emoji='🧲';title='Keep Studying!';subtitle="Physics takes practice — you'll get there!";cls='poor';}
+  document.getElementById('results-emoji').textContent=emoji;
+  document.getElementById('results-title').textContent=title;
+  document.getElementById('results-subtitle').textContent=subtitle;
+  pe.className='score-big '+cls;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+ 
+function restart(){
+  document.getElementById('results-screen').style.display='none';
+  document.getElementById('setup-screen').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
